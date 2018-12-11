@@ -9,10 +9,10 @@ import os
 SUMMARY = 'SUMMARY.md'  # SUMMARY.md 的文件名
 
 # 以下变量可以根据需要自定义
-SUMMARY_FILE_NAME = 'SUMMARY'  # SUMMARY.md 在电子书目录中的显示名
+SUMMARY_TITLE = '# 目录'  # SUMMARY.md 文件中的开头
 SUMMARY_CONT = '{s}* [{name}]({link})\n'  # SUMMARY.md 中的内容格式，可以自定义 * 为 - ，其他不能动
 README = 'README.md'  # readme文件的名字，程序会检索各级文件夹，如果其中没有这个名字的readme文件，会自动生成一个
-README_CONT = '# Introduction'  # 程序自动生成readme文件时，其中的内容
+README_CONT = '# 说明'  # 程序自动生成readme文件时，其中的内容
 EXTENDS = {'_book', 'gitbook_gen_summary.py'}  # 不属于电子书的文件(夹)或者不想显示在电子书中的文件(夹)
 
 
@@ -53,7 +53,7 @@ def gen_tree(path) -> list:
         if README in low_dirs:
             low_dirs.remove(README)
         else:
-            with open(os.path.join(path, os.path.join(d, README))) as f:
+            with open(os.path.join(path, os.path.join(d, README)), 'w') as f:
                 f.write(README_CONT)
         tree.append((d, os.path.join(d, README)))
         # 把下一层文件名(带部分路径)放到dirs中去
@@ -63,16 +63,25 @@ def gen_tree(path) -> list:
 
 def gen_summary(path, tree):
     with open(os.path.join(path, SUMMARY), 'w') as f:
-        f.write('# ' + SUMMARY[:-3] + '\n\n')
-        f.write(SUMMARY_CONT.format(s='', name=README_CONT[2:README_CONT.find('\n')], link=README))
+        # 标题
+        f.write(SUMMARY_TITLE + '\n\n')
+        # readme
+        f.write(SUMMARY_CONT.format(s='', name=(README_CONT + ' ')[2:README_CONT.find('\n')], link=README))
         link_temp = {link: i for i, (n, link) in enumerate(tree)}
+        # 是否增加summary
         if SUMMARY in link_temp:
-            f.write(SUMMARY_CONT.format(s='', name=SUMMARY_FILE_NAME, link=SUMMARY) + '\n\n')
+            f.write(SUMMARY_CONT.format(s='', name=(SUMMARY_TITLE + ' ')[2:SUMMARY_TITLE.find('\n')], link=SUMMARY) + '\n\n')
             tree = tree[:link_temp[SUMMARY]] + tree[link_temp[SUMMARY] + 1:]  # 防止原变量被更改
-        f.writelines((SUMMARY_CONT.format(s=' ' * 2 * name.count(os.path.sep), link=link,
-                                          # 把名字中路径分隔符之前的部分去掉
-                                          name=name[name.rindex(os.path.sep) + 1:] if os.path.sep in name else name)
-                      for name, link in tree))
+        # 增加主要目录内容
+        for name, link in tree:
+            with open(os.path.join(path, link), 'r') as fi:
+                line1 = fi.readlines(1)[0]
+                name1 = (line1 + ' ')[2:line1.find('\n')]
+            if README in link:
+                with open(os.path.join(path, link), 'r') as fi:
+                    if README_CONT == fi.read():
+                        name1 = name[name.rfind(os.path.sep) + 1:]
+            f.write(SUMMARY_CONT.format(s=' ' * 2 * name.count(os.path.sep), name=name1, link=link))
 
 
 def main():
