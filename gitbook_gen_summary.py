@@ -1,61 +1,64 @@
+"""
+    通过已有文件自动生成 SUMMARY.md 文件内容。
+
+    使用：启动时传入gitbook所在路径即可。
+"""
 import sys
 import os
 
-# Do not change.
-SUMMARY = 'SUMMARY.md'  # Name of "summary".
+SUMMARY = 'SUMMARY.md'  # SUMMARY.md 的文件名
 
-# Customizable.
-SUMMARY_FILE_NAME = 'SUMMARY'  # Name of "summary" display in gitbook.
-SUMMARY_CONT = '{s}* [{name}]({link})\n'  # Content template of "summary".
-README = 'README.md'  # Name of "readme".
-README_CONT = '# Introduction\n'  # The content in the "readme" created via program while there isn't a "readme".
-EXTENDS = {'_book', 'gitbook_gen_summary.py'}  # File that do not belong to gitbook or want to be ignored.
+# 以下变量可以根据需要自定义
+SUMMARY_FILE_NAME = 'SUMMARY'  # SUMMARY.md 在电子书目录中的显示名
+SUMMARY_CONT = '{s}* [{name}]({link})\n'  # SUMMARY.md 中的内容格式，可以自定义 * 为 - ，其他不能动
+README = 'README.md'  # readme文件的名字，程序会检索各级文件夹，如果其中没有这个名字的readme文件，会自动生成一个
+README_CONT = '# Introduction'  # 程序自动生成readme文件时，其中的内容
+EXTENDS = {'_book', 'gitbook_gen_summary.py'}  # 不属于电子书的文件(夹)或者不想显示在电子书中的文件(夹)
 
 
 def get_path() -> str:
-    return sys.argv[1] if len(sys.argv) > 1 else input('Please input the path of your GitBook files:')
+    return sys.argv[1] if len(sys.argv) > 1 else input('请输入书籍所在目录：')
 
 
 def gen_tree(path) -> list:
     """
-    Generate lists of names and links.
-    :param path:
+    生成书籍目录中的 显示值 和 md文件位置 相对应的列表
     :return: [(name, link), ...]
-        Name may contain path separators.
-        List is better than Dict because there may be cases where .md files have the same name as folders.
+        name中可能有路径分隔符
+        list比dict好，因为可以放心处理md文件和文件夹同名的情况
     """
     # listdir
-    dirs = [d for d in os.listdir(path) if d not in EXTENDS and not d.startswith('.')]
+    dirs = [d for d in os.listdir(path) if d not in EXTENDS and not d.startswith('.')]  # 以 . 开头的就忽略掉
 
-    # Check "readme" file.
+    # 检查是否有readme文件
     if README in dirs:
         dirs.remove(README)
     else:
         with open(os.path.join(path, README), 'w') as f:
             f.write(README_CONT)
 
-    # :return: [(name, link), ...]
+    # 结果
     tree = []
     while dirs:
         d = dirs.pop(0)
 
-        # <d> is a *.md file.
+        # 如果是一个md文件
         if d.endswith('.md'):
             tree.append((d[:-3], d))
             continue
 
-        # <d> is a folder.
+        # 如果是一个文件夹
         low_dirs = os.listdir(os.path.join(path, d))
-        # Check "readme" file.
+        # 检查是否有readme文件
         if README in low_dirs:
             low_dirs.remove(README)
         else:
             with open(os.path.join(path, os.path.join(d, README))) as f:
                 f.write(README_CONT)
         tree.append((d, os.path.join(d, README)))
-        # Add files under d to dirs.
+        # 把下一层文件名(带部分路径)放到dirs中去
         dirs.extend((os.path.join(d, ld) for ld in low_dirs if ld not in EXTENDS and not ld.startswith('.')))
-    return sorted(tree, key=lambda e: e[0])  # If use depth-first traversal, you don't need to sort.
+    return sorted(tree, key=lambda e: e[0])  # 如果使用深度优先遍历就无需排序了
 
 
 def gen_summary(path, tree):
@@ -65,9 +68,9 @@ def gen_summary(path, tree):
         link_temp = {link: i for i, (n, link) in enumerate(tree)}
         if SUMMARY in link_temp:
             f.write(SUMMARY_CONT.format(s='', name=SUMMARY_FILE_NAME, link=SUMMARY) + '\n\n')
-            tree = tree[:link_temp[SUMMARY]] + tree[link_temp[SUMMARY] + 1:]  # Avoid changing the original <tree>.
+            tree = tree[:link_temp[SUMMARY]] + tree[link_temp[SUMMARY] + 1:]  # 防止原变量被更改
         f.writelines((SUMMARY_CONT.format(s=' ' * 2 * name.count(os.path.sep), link=link,
-                                          # Remove the contents before the last path separator in name.
+                                          # 把名字中路径分隔符之前的部分去掉
                                           name=name[name.rindex(os.path.sep) + 1:] if os.path.sep in name else name)
                       for name, link in tree))
 
