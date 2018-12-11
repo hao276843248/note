@@ -1,3 +1,5 @@
+# 库
+
 ## 查看当前解释器环境的包的位置
 
 ```py
@@ -5,8 +7,10 @@
 >>> sys.path
 ```
 
-## 本地安装第三方库
+## 本地手动安装库
+
+进入库文件包 `setup.py` 所在路径
 
 ```sh
-$ python setup.py install
+python setup.py install
 ```

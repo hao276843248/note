@@ -1,6 +1,6 @@
 # VS Code
 
-- [ ] 什么是VS Code
+一个功能强大的IDE，
 
 ## 快捷操作
 
@@ -18,7 +18,3 @@ i | o | r
     - 如果想创建文件，必须先在EXPLORER指定文件夹才行(VS Code可以记住这个文件夹，下次打开应用还在)
 2. 设置界面的颜色主题：「左下角小齿轮」 ➡ 「Color Theme」
 3. 自动保存设置：「左下角小齿轮」 ➡ 「Settings」 ➡ 「Commonly Used」 ➡ 「Files: Auto Save」，选择适合自己的
-
-## 常用插件
-
-Path Intellisense

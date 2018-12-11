@@ -66,7 +66,7 @@ def gen_summary(path, tree):
         if SUMMARY in link_temp:
             f.write(SUMMARY_CONT.format(s='', name=SUMMARY_FILE_NAME, link=SUMMARY) + '\n\n')
             tree = tree[:link_temp[SUMMARY]] + tree[link_temp[SUMMARY] + 1:]  # Avoid changing the original <tree>.
-        f.writelines((SUMMARY_CONT.format(s=' ' * 4 * name.count(os.path.sep), link=link,
+        f.writelines((SUMMARY_CONT.format(s=' ' * 2 * name.count(os.path.sep), link=link,
                                           # Remove the contents before the last path separator in name.
                                           name=name[name.rindex(os.path.sep) + 1:] if os.path.sep in name else name)
                       for name, link in tree))
