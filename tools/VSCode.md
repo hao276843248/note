@@ -16,8 +16,8 @@ i | o | r
 1. 能不能打开VS Code编辑器就直接创建一个文件？
     - 不行，必须选择文件使用VS Code打开
     - 如果想创建文件，必须先在EXPLORER指定文件夹才行(VS Code可以记住这个文件夹，下次打开应用还在)
-2. 设置界面的颜色主题：左下角小齿轮 ➡ Color Theme
-3. 自动保存设置：左下角小齿轮 ➡ Settings ➡ Commonly Used ➡ Files: Auto Save，选择适合自己的
+2. 设置界面的颜色主题：「左下角小齿轮」 ➡ 「Color Theme」
+3. 自动保存设置：「左下角小齿轮」 ➡ 「Settings」 ➡ 「Commonly Used」 ➡ 「Files: Auto Save」，选择适合自己的
 
 ## 常用插件
 
