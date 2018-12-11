@@ -1,7 +1,7 @@
 # GitBook
 
 - [x] 增加一个例子，像官方文档那样
-- [ ] GitBook怎么做todolist
+- [ ] GitBook怎么做todolist
 - [x] 是不是只需要SUMMARY.md 和 README.md 就可以serve了，那自己添加好后就不需要再init了？
 - [ ] 看看哪部分是可以拿出来的，直接能运行的
 
