@@ -3,6 +3,7 @@
 ## 常用命令
 
 命令 | 示例 | 说明
+-|-|-
 clone | `git clone ssh或http链接` | 使用ssh无需用户名密码，本机需要有ssh服务并且将公钥添加到Git代码服务器，http无需事先设置什么，使用时需要填写用户名和密码，clone后本地只有一个master分支，本地分支和远程分支是互相独立的
 branch | `git branch` | 查看本地分支，当前分支用‘*’+‘绿色’标出（-r查看远程分支，-a查看本地和远程所有分支）
  | `git branch -d <branch>` | 删除分支
